@@ -1,0 +1,31 @@
+{
+  "name": "supply_chain_and_logistics_management_system",
+  "version": "1.0.0",
+  "description": "Kiambu Law courts procurement ",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "supply-chain-and-Logistics",
+    "Kiambu-law-courts"
+  ],
+  "author": "John Kahuha",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jest": "^26.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.12",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.6.3",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "supertest": "^6.1.3"
+  }
+}
