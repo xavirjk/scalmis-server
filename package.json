@@ -4,12 +4,18 @@
   "description": "Kiambu Law courts procurement ",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "jest --verbose --runInBand"
   },
   "keywords": [
     "supply-chain-and-Logistics",
     "Kiambu-law-courts"
   ],
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules"
+    ]
+  },
   "author": "John Kahuha",
   "license": "MIT",
   "dependencies": {
