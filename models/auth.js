@@ -2,42 +2,49 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema, model } = mongoose;
 
-const authSchema = new Schema({
-  fullName: {
-    type: String,
-    requred: true,
-    minlength: 3,
-    maxlength: 40,
-    trim: true,
+const baseOptions = {
+  discriminatorKeys: 'Auth User',
+  collection: '',
+};
+const authSchema = new Schema(
+  {
+    fullName: {
+      type: String,
+      requred: true,
+      minlength: 3,
+      maxlength: 40,
+      trim: true,
+    },
+    pjno: {
+      type: Number,
+      required: true,
+      trim: true,
+      lenght: 5,
+      unique: true,
+    },
+    office: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 11,
+      maxlenght: 50,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 6,
+      maxlength: 80,
+    },
   },
-  pjno: {
-    type: Number,
-    required: true,
-    trim: true,
-    lenght: 5,
-    unique: true,
-  },
-  office: {
-    type: String,
-    required: false,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 11,
-    maxlenght: 50,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 6,
-    maxlength: 80,
-  },
-});
+  baseOptions
+);
 
 const { statics, methods } = authSchema;
 
