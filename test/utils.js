@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const models = require('../models');
+
 require('dotenv').config();
 const assert = require('assert');
 
 const app = require('../app');
-const { establishConnection } = require('../models').utils;
+const { establishConnection } = require('../models/utils');
 const MONGO_TEST_URI = process.env.MONGO_TEST_URI;
 
 const connectToDb = async () => {
@@ -66,5 +68,19 @@ exports.clearModel = async (model) => {
     );
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+exports.clearDb = async () => {
+  try {
+    for (const modelName in models) {
+      const model = models[modelName];
+      const noOfDocs = await model.countDocuments({}).exec();
+      if (noOfDocs > 0) {
+        await this.clearModel(model);
+      }
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 };

@@ -2,14 +2,15 @@ const { Stock } = require('../../models');
 const { doSetupAndTearDown, clearModel } = require('../utils');
 
 describe('Stock module', () => {
-  const date = new Date().toLocaleString();
+  let date;
   doSetupAndTearDown();
   afterAll(async () => {
     await clearModel(Stock);
   });
   it('Creates a New Stock entry', async () => {
-    const stock = await Stock.newStock(date);
-    expect(stock.timecreated).toEqual(date);
+    const stock = await Stock.newStock();
+    expect(stock.timecreated).toBeTruthy();
+    date = stock.timecreated;
   });
   it('updates invoice array for a stock entry', async () => {
     const arr = ['1nvoice1.pdf', 'invoice2.jpg', 'invoice3.pdf'];

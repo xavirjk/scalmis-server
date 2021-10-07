@@ -1,5 +1,5 @@
 const { MONGO_URI } = require('./context').env;
-const { establishConnection } = require('./models').utils;
+const { establishConnection } = require('./models/utils');
 
 const app = require('./app');
 const PORT = process.env.PORT || 3200;

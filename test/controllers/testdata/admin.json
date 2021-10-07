@@ -1,0 +1,32 @@
+[
+    {
+      "item": "Item",
+      "description": "18.9l",
+      "amountAdded": 10,
+      "assetValue": 250
+    },
+    {
+      "item": "Item2",
+      "description": "500ml",
+      "amountAdded": 5,
+      "assetValue": 100
+    },
+    {
+      "item": "Item3",
+      "description": "desc3",
+      "amountAdded": 1,
+      "assetValue": 3000
+    },
+    {
+      "item": "Item4",
+      "description": "desc4",
+      "amountAdded": 1,
+      "assetValue": 40000
+    },
+    {
+      "item": "Item5",
+      "description": "desc5",
+      "amountAdded": 90,
+      "assetValue": 1500
+    }
+]

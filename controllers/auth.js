@@ -15,6 +15,7 @@ exports.postLogin = async (req, res, next) => {
         if (err) return next(err);
         const data = {
           success: true,
+          auth: type,
           token: 'Bearer ' + token,
         };
         res.status(200).send(data);

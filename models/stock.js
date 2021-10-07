@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const stockSchema = new Schema({
   timecreated: {
-    type: String,
+    type: Date,
     required: true,
   },
   invoices: [String],
@@ -11,13 +11,18 @@ const stockSchema = new Schema({
 
 const { statics, methods } = stockSchema;
 
-statics.newStock = async function (timecreated) {
+statics.newStock = async function () {
+  const timecreated = new Date();
   const stock = new this({ timecreated });
   return await stock.save();
 };
 
 statics.findByTimeCreated = async function (timecreated) {
   return await this.findOne({ timecreated });
+};
+
+statics.getAll = async function () {
+  return await this.find({});
 };
 
 methods.updateInvoices = async function (names) {

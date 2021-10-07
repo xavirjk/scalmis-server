@@ -1,5 +1,5 @@
 const { Item } = require('../../models');
-const { doSetupAndTearDown, checkMatch, clearModel } = require('../utils');
+const { doSetupAndTearDown, clearModel } = require('../utils');
 
 describe('Item module', () => {
   const details = { item: 'Item', totalValue: 0 };

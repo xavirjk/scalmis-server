@@ -1,7 +1,7 @@
 const { Asset, Stock, Item } = require('../../models');
-const { doSetupAndTearDown, clearModel } = require('../utils');
+const { doSetupAndTearDown, clearDb } = require('../utils');
 describe('Asset Module', () => {
-  const date = new Date().toLocaleString();
+  let date;
   const details = { item: 'Item', totalValue: 0 };
   const assetDetails = {
     stockId: '',
@@ -12,12 +12,10 @@ describe('Asset Module', () => {
   };
   doSetupAndTearDown();
   afterAll(async () => {
-    await clearModel(Asset);
-    await clearModel(Stock);
-    await clearModel(Item);
+    await clearDb();
   });
   it('Successfully creates a new Asset', async () => {
-    const stock = await Stock.newStock(date);
+    const stock = await Stock.newStock();
     const item = await Item.createNewItem(details);
     assetDetails.stockId = stock.id;
     assetDetails.itemId = item.id;
