@@ -13,4 +13,6 @@ establishConnection(MONGO_URI).then(
   }
 );
 
-/**App entry index File*/
+/**
+ * App entry index File Smart TRONICS
+ * */

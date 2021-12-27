@@ -135,10 +135,20 @@ const operateFile = async () => {
 };
 
 async function checkifNotCreateFile(dir, cb) {
-  fs.stat(dir, (err) => {
-    if (err) fs.mkdir(dir, cb);
-    else cb();
-  });
+  const found = await fs.stat(dir, (err) => null);
+  if (!found) {
+    await fs.mkdir(dir, () => {});
+  }
+  await cb();
+  /*fs.stat(dir, (err) => {
+    if (err) {
+      console.log(2);
+      await fs.mkdir(dir, cb);
+    } else {
+      console.log(2);
+      cb();
+    }
+  });*/
 }
 
 function copyFolderSync(from, to) {
@@ -153,15 +163,28 @@ function copyFolderSync(from, to) {
   });
 }
 
-exports.downloadAndUpdate = async (next, url) => {
-  const fetchAndExtract = () => {
-    var file = fs.createWriteStream(dir + 'server.zip');
-    http.get(url, function (response) {
+exports.downloadAndUpdate = async (next, body, pckg) => {
+  const editPackage = async () => {
+    pckg.version = body.version;
+    fs.writeFile(
+      './package.json',
+      JSON.stringify(pckg, null, 2),
+      function writeJSON(err) {
+        if (err) next(err);
+        else console.log('done');
+      }
+    );
+  };
+  const fetchAndExtract = async () => {
+    var file = await fs.createWriteStream(dir + 'server.zip');
+    await editPackage();
+    http.get(body.url, function (response) {
       response.pipe(file);
       file.on('finish', function () {
         file.close((err) => {
-          if (!err) operateFile();
-          else next(err);
+          if (!err) {
+            operateFile();
+          } else next(err);
         }); // close() is async, call cb after close completes.
       });
     });

@@ -367,7 +367,8 @@ exports.saveStockItem = async (req, res, next) => {
 exports.postUpdateServer = async (req, res, next) => {
   try {
     const { body } = req;
-    await extract.downloadAndUpdate(next, body.url);
+    console.log('version', body.version);
+    await extract.downloadAndUpdate(next, body, pjson);
     let message = 'Updating server... This can take A while. Please Be patient';
     res.status(201).send({ message: message });
   } catch (error) {
