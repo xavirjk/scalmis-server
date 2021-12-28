@@ -5,3 +5,5 @@ exports.Asset = require('./assets');
 exports.Admin = require('./admin');
 exports.User = require('./users');
 exports.Issued = require('./issued');
+exports.Items = require('./item');
+exports.Service = require('./service');

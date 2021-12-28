@@ -1,4 +1,5 @@
 const { Auth, Admin, User } = require('../models');
+const { mailer } = require('../services');
 const { signin } = require('../context/config');
 
 exports.postLogin = async (req, res, next) => {
@@ -7,7 +8,7 @@ exports.postLogin = async (req, res, next) => {
     const type = params.type;
     const member = await findByType(type, body);
     if (!member) {
-      res.status(401).send('Credentials failed to match');
+      res.status(401).send({ message: 'Credentials failed to match' });
       return;
     }
     const cb = (err, token) => {
@@ -15,6 +16,7 @@ exports.postLogin = async (req, res, next) => {
         if (err) return next(err);
         const data = {
           success: true,
+          message: 'loggedIn',
           auth: type,
           token: 'Bearer ' + token,
         };
@@ -39,18 +41,54 @@ exports.postSignup = async (req, res, next) => {
       res.status(401).send('Not created, entered email or pjno exists');
       return;
     }
+    if (!body.password) {
+      body['password'] = genCode();
+      const result = await mailer(body.fullName, body.email, body.password)
+        .then((success) => success)
+        .catch((err) => {
+          res.status(401).send('Not created, Mailing failed');
+          return null;
+        });
+      if (!result) return;
+    }
     const created = await createForType(type, body);
     if (!created) {
       res.status(401).send('Error processing the request. Try again Later');
       return;
     }
-    res.status(201).send('successfully created user');
+    res.status(201).send({ message: 'successfully created user' });
   } catch (err) {
     next(err);
   }
 };
-exports.postDeleteUser = async (req, res, next) => {};
 
+exports.postSaveUser = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+    var { type, data } = body;
+    const pjnoPresent = await Auth.findByPjno(data.pjno);
+    const emailPresent = await Auth.findByEmail(data.email);
+    const auth = await Auth.findById(type.id);
+    type.type ? (data['__t'] = 'Admin') : (data['__t'] = 'User');
+    if (user.id === auth.id && auth.__t !== data.__t) {
+      res.status(401).send('Cannot Edit Default Admin');
+      return;
+    }
+    if (pjnoPresent && auth.id !== pjnoPresent.id) {
+      res.status(401).send('entered pjno exists');
+      return;
+    }
+    if (emailPresent && auth.id !== emailPresent.id) {
+      res.status(401).send('entered Email exists');
+      return;
+    }
+    delete data.password;
+    const edited = await auth.editOne(data);
+    res.status(201).send({ message: 'success' });
+  } catch (err) {
+    next(err);
+  }
+};
 async function createForType(type, body) {
   switch (type) {
     case 'admin':
@@ -71,4 +109,28 @@ async function findByType(type, body) {
     default:
       break;
   }
+}
+
+const genCode = () => {
+  var sym = ['!', '@', '#', '$', '%', '^', '&', '*', '=', '-', '_'];
+  var Alphabets = 'abcdefghijklmnopqrstuvwzyz';
+  var pwdChars =
+    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var pwdLen = 5;
+  var randPassword = Array(pwdLen)
+    .fill(pwdChars)
+    .map(function (x) {
+      return x[Math.floor(Math.random() * x.length)];
+    })
+    .join('');
+  let randSym = sym[getRand(sym.length)];
+  let randNum = getRand(10);
+  let randAlpha = Alphabets[getRand(Alphabets.length)];
+  return (
+    randPassword + `${randAlpha.toUpperCase()}${randSym}${randNum}${randAlpha}`
+  );
+};
+
+function getRand(max) {
+  return Math.floor(Math.random() * max);
 }

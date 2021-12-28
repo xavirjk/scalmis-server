@@ -4,7 +4,7 @@ const { startUp, closeApp, clearModel } = require('../utils');
 
 const PORT = 7181;
 
-describe('Auth controllers', () => {
+describe.skip('Auth controllers', () => {
   let app;
   const member = {
     fullname: 'Jack Bauer',

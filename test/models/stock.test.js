@@ -1,7 +1,7 @@
 const { Stock } = require('../../models');
 const { doSetupAndTearDown, clearModel } = require('../utils');
 
-describe('Stock module', () => {
+describe.skip('Stock module', () => {
   let date;
   doSetupAndTearDown();
   afterAll(async () => {

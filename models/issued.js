@@ -15,8 +15,7 @@ const issuedSchema = new Schema({
   },
   assetId: {
     type: ObjectId,
-    required: true,
-    ref: 'Asset',
+    ref: 'Assets',
   },
   refMember: Object,
   issuedAt: Date,
@@ -24,11 +23,27 @@ const issuedSchema = new Schema({
   approved: Boolean,
 });
 
-const { statics } = issuedSchema;
+const { statics, methods } = issuedSchema;
 
 statics.saveIssued = async function (issued) {
   issued.issuedAt = new Date();
   const issue = new this(issued);
   return await issue.save();
+};
+
+statics.findByQuery = async function (query) {
+  return await this.find(query)
+    .populate('member', 'fullName office -_id')
+    .populate('itemId', 'item -_id')
+    .populate('assetId', 'description -_id')
+    .sort([['_id', -1]])
+    .exec();
+};
+methods.approval = async function (approval) {
+  this.approved = approval;
+  return await this.save();
+};
+methods.deleteReq = async function () {
+  return await this.deleteOne();
 };
 module.exports = model('Issued', issuedSchema);

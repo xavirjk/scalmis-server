@@ -1,38 +1,41 @@
-const { Item, Stock, Asset, Issued, Admin } = require('../models');
+const { Items, Stock, Asset, Issued, Admin } = require('../models');
 
 exports.requestedItemsCanBeIssued = async (user, body) => {
-  const { refMember, items } = body;
-  const stock = await Stock.find({});
+  const { refMember, items, isItem } = body;
+  const stock = await Stock.getAll();
+  if (stock.length < 1)
+    return { status: 409, data: [], message: 'stock Empty' };
   const notFound = [];
+  const base = { member: user.id, refMember: refMember };
   for (item of items) {
-    const quantity = item.quantity;
-    delete item.quantity;
-    for (let i = stock.length - 1; i >= 0; i--) {
-      const asset = await Asset.findOne({ stockId: stock[i].id, ...item });
-      if (!asset) continue;
-      if (asset.progressCount >= quantity) {
-        asset.editProgressCount(quantity);
-        const editItem = await Item.findById(item.itemId);
-        await editItem.updateTotalValue(-quantity);
-        const isAdmin = await checkIsAdmin(user.id);
-        await Issued.saveIssued({
-          member: user.id,
-          refMember: refMember,
-          itemId: item.itemId,
-          assetId: asset.id,
-          quantity: quantity,
-          approved: isAdmin ? true : false,
-        });
-
-        break;
+    let obj = { ...base, itemId: item.itemId, quantity: item.quantity };
+    if (isItem) {
+      delete item.quantity;
+      const asset = await Asset.findOne({ stockId: stock[0].id, ...item });
+      if (!asset) {
+        notFound.push(item);
+        continue;
       }
-      if (!i) notFound.push(item);
-    }
+      if (asset.progressCount >= obj.quantity && obj.quantity !== 0) {
+        asset.editProgressCount(obj.quantity);
+        const editItem = await Items.findById(item.itemId);
+        await editItem.updateTotalValue(-obj.quantity);
+        await saveRequest({ ...obj, ...{ assetId: asset.id } });
+      } else notFound.push(item);
+    } else await saveRequest(obj);
   }
-  if (notFound.length == items.length) return { status: 404, data: notFound };
-  return { status: 200, data: notFound };
+  if (notFound.length == items.length)
+    return { status: 409, data: notFound, message: 'Request failed' };
+  else if (!notFound.length)
+    return { status: 201, data: notFound, message: 'request success' };
+  else return { status: 206, data: notFound, message: 'partially processed' };
 };
 
 const checkIsAdmin = async (id) => {
   return await Admin.findById(id);
+};
+const saveRequest = async (data) => {
+  const isAdmin = await checkIsAdmin(data.member);
+  const admin = { approved: isAdmin ? true : false };
+  return await Issued.saveIssued({ ...data, ...admin });
 };

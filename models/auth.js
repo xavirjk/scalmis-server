@@ -10,7 +10,7 @@ const authSchema = new Schema(
   {
     fullName: {
       type: String,
-      requred: true,
+      required: true,
       minlength: 3,
       maxlength: 40,
       trim: true,
@@ -49,10 +49,10 @@ const authSchema = new Schema(
 const { statics, methods } = authSchema;
 
 statics.createOne = async function (data) {
-  const { fullname, pjno, office, email, password } = data;
+  const { fullName, pjno, office, email, password } = data;
   const hashed = await hashedPassword(password);
   const member = new this({
-    fullname,
+    fullName,
     pjno,
     office,
     email,
@@ -85,7 +85,17 @@ methods.deleteMember = async function () {
 methods.checkMatch = async function (plainTextPassword) {
   return await bcrypt.compare(plainTextPassword, this.password);
 };
-
+methods.ResetCode = async function (details) {
+  const pass = { password: await hashedPassword(details.password) };
+  await this.editOne(pass);
+};
+methods.editOne = async function (details) {
+  for (const field in details) await this.editField(field, details[field]);
+};
+methods.editField = async function (field, data) {
+  this[field] = data;
+  return await this.save();
+};
 async function hashedPassword(plainTextPassword) {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(plainTextPassword, salt);

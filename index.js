@@ -12,3 +12,5 @@ establishConnection(MONGO_URI).then(
     console.error('err', err);
   }
 );
+
+/**App entry index File*/

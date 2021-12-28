@@ -1,6 +1,6 @@
 const { Asset, Stock, Item } = require('../../models');
 const { doSetupAndTearDown, clearDb } = require('../utils');
-describe('Asset Module', () => {
+describe.skip('Asset Module', () => {
   let date;
   const details = { item: 'Item', totalValue: 0 };
   const assetDetails = {

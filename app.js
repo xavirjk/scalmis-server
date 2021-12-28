@@ -10,6 +10,7 @@ const app = express();
 
 app.use(express.static(path.join()));
 app.use('/Data', express.static(path.join(__dirname, 'Data')));
+app.use(express.static(path.join(__dirname, 'build')));
 loader(app, preConfig);
 routes(app);
 loader(app, postConfig);

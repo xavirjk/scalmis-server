@@ -1,6 +1,6 @@
 const { Auth } = require('../../models');
 const { doSetupAndTearDown, checkMatch, clearModel } = require('../utils');
-describe('Auth Module', () => {
+describe.skip('Auth Module', () => {
   const member = {
     fullname: 'Jack Bauer',
     pjno: 11111,

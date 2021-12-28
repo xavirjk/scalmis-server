@@ -1,7 +1,7 @@
 const { Item } = require('../../models');
 const { doSetupAndTearDown, clearModel } = require('../utils');
 
-describe('Item module', () => {
+describe.skip('Item module', () => {
   const details = { item: 'Item', totalValue: 0 };
   doSetupAndTearDown();
   afterAll(async () => {

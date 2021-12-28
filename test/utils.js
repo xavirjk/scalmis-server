@@ -9,10 +9,19 @@ const assert = require('assert');
 const app = require('../app');
 const { establishConnection } = require('../models/utils');
 const MONGO_TEST_URI = process.env.MONGO_TEST_URI;
+const MONGO_URI = process.env.MONGO_URI;
 
 const connectToDb = async () => {
   try {
     await establishConnection(MONGO_TEST_URI);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const connectToProdnDb = async () => {
+  try {
+    await establishConnection(MONGO_URI);
   } catch (error) {
     throw new Error(error);
   }
@@ -29,6 +38,12 @@ let server;
 
 exports.startUp = async (PORT) => {
   await connectToDb();
+  server = app.listen(PORT);
+  return server;
+};
+
+exports.startUpProdn = async (PORT) => {
+  await connectToProdnDb();
   server = app.listen(PORT);
   return server;
 };
