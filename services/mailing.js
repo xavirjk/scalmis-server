@@ -16,9 +16,9 @@ const mailer = async (name, recipientMail, code) => {
     auth: {
       type: 'OAUTH2',
       user: vars.EMAIL,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN,
+      clientId: vars.CLIENT_ID,
+      clientSecret: vars.CLIENT_SECRET,
+      refreshToken: vars.REFRESH_TOKEN,
       accessToken: accessToken,
     },
   });

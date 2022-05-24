@@ -41,24 +41,12 @@ exports.postSignup = async (req, res, next) => {
       res.status(401).send('Not created, entered email or pjno exists');
       return;
     }
-    if (!body.password) {
-      body['password'] = genCode();
-      mailer(body.fullName, body.email, body.password)
-        .then((res) => {
-          createForType(type, body)
-            .then((res) =>
-              res.status(201).send({ message: 'successfully created user' })
-            )
-            .catch((err) => {
-              console.log('err', err);
-              res.status(401).send('failed');
-            });
-        })
-        .catch((err) => {
-          res.status(401).send('Not created, Mailing failed');
-          return null;
-        });
-    }
+    body['password'] = genCode();
+    const result = await mailer(body.fullName, body.email, body.password);
+    if (!result.rejected.length) {
+      await createForType(type, body);
+      res.status(201).send({ message: 'successfully created user' });
+    } else res.status(401).send('Not created, Mailing failed');
   } catch (err) {
     next(err);
   }
