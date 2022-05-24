@@ -1,4 +1,6 @@
 const nodeMailer = require('nodemailer');
+const { google } = require('googleapis');
+
 const vars = require('../context/env');
 
 const mailer = async (name, recipientMail, code) => {

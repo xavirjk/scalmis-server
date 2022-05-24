@@ -45,8 +45,14 @@ exports.postSignup = async (req, res, next) => {
       body['password'] = genCode();
       mailer(body.fullName, body.email, body.password)
         .then((res) => {
-          await createForType(type, body);
-          res.status(201).send({ message: 'successfully created user' });
+          createForType(type, body)
+            .then((res) =>
+              res.status(201).send({ message: 'successfully created user' })
+            )
+            .catch((err) => {
+              console.log('err', err);
+              res.status(401).send('failed');
+            });
         })
         .catch((err) => {
           res.status(401).send('Not created, Mailing failed');
