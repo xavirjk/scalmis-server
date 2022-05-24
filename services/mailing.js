@@ -11,7 +11,6 @@ const mailer = async (name, recipientMail, code) => {
   );
   oAuth2Client.setCredentials({ refresh_token: vars.REFRESH_TOKEN });
   const accessToken = await oAuth2Client.getAccessToken();
-  console.log('acc', accessToken);
   const transport = nodeMailer.createTransport({
     service: 'gmail',
     auth: {
@@ -30,7 +29,6 @@ const mailer = async (name, recipientMail, code) => {
     html: `<p>Hi <b>${name} </b> your Account password is <b>${code}</b></p></br>`,
   };
   const result = await transport.sendMail(mailOptions);
-  console.log('res', result);
   return result;
 };
 
