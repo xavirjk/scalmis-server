@@ -43,20 +43,16 @@ exports.postSignup = async (req, res, next) => {
     }
     if (!body.password) {
       body['password'] = genCode();
-      const result = await mailer(body.fullName, body.email, body.password)
-        .then((success) => success)
+      const result = mailer(body.fullName, body.email, body.password)
+        .then((res) => {
+          await createForType(type, body);
+          res.status(201).send({ message: 'successfully created user' });
+        })
         .catch((err) => {
           res.status(401).send('Not created, Mailing failed');
           return null;
         });
-      if (!result) return;
     }
-    const created = await createForType(type, body);
-    if (!created) {
-      res.status(401).send('Error processing the request. Try again Later');
-      return;
-    }
-    res.status(201).send({ message: 'successfully created user' });
   } catch (err) {
     next(err);
   }
