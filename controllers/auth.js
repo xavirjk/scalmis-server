@@ -43,7 +43,7 @@ exports.postSignup = async (req, res, next) => {
     }
     if (!body.password) {
       body['password'] = genCode();
-      const result = mailer(body.fullName, body.email, body.password)
+      mailer(body.fullName, body.email, body.password)
         .then((res) => {
           await createForType(type, body);
           res.status(201).send({ message: 'successfully created user' });
